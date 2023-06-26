@@ -1,4 +1,4 @@
-import { Application, Sprite, Container, Graphics, TextStyle, Text } from 'pixi.js'
+import { Application, Sprite, Container, Graphics, TextStyle, Text, Assets } from 'pixi.js'
 import { BlurFilter } from "pixi.js"; //, ParticleContainer, Texture
 //import * as particleSettings from "./emitter.json";
 //import { Emitter } from "pixi-particles";
@@ -7,6 +7,7 @@ import { BlurFilter } from "pixi.js"; //, ParticleContainer, Texture
 //import { Scene } from "../scenes/Scene";
 import { TweenScene } from "../scenes/TweenScene";
 import { TickerScene } from "../scenes/TickerScene";
+import { LoaderScene } from "../scenes/LoaderScene";
 
 
 const app = new Application({
@@ -17,6 +18,9 @@ const app = new Application({
 	width: 1200,
 	height: 800
 });
+
+const sceneLoader : LoaderScene = new LoaderScene(app.screen.width, app.screen.height);
+app.stage.addChild(sceneLoader);
 
 const conty: Container = new Container();
 conty.x = 200;
@@ -99,3 +103,28 @@ app.stage.addChild(sceneTick);
 
 const sceneTween: TweenScene = new TweenScene(app.screen.width, app.screen.height);
 app.stage.addChild(sceneTween);
+
+//const mar: Sprite = Sprite.from("mario coin");
+
+
+//const mario = Assets.get("mario coin");
+// const mar: Sprite = Sprite.from(mario); // Adjust this line to match your actual code
+// mar.x = 100;
+// mar.y = 100;
+// app.stage.addChild(mar);
+
+// LoaderScene.emitter.on('loaded', () => {
+// 	const mar: Sprite = Sprite.from('mario coin');
+// 	mar.x = 100;
+// 	mar.y = 100;
+// 	app.stage.addChild(mar);
+// });
+
+
+Assets.load("mario coin").then(lol => {
+	const superSprite = Sprite.from(lol);
+	superSprite.x = 100;
+	superSprite.y = 100;
+	superSprite.scale.set(0.5);
+	app.stage.addChild(superSprite);
+})

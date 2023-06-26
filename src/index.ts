@@ -1,9 +1,11 @@
 import { Application, Sprite, Container, Graphics, TextStyle, Text } from 'pixi.js'
-import { BlurFilter, ParticleContainer, Texture } from "pixi.js"; 
-import * as particleSettings from "./emitter.json";
+import { BlurFilter } from "pixi.js"; //, ParticleContainer, Texture
+//import * as particleSettings from "./emitter.json";
 //import { Emitter } from "pixi-particles";
-import particles from 'pixi-particles';
-import PIXI from 'pixi.js';
+//import particles from 'pixi-particles';
+//import PIXI from 'pixi.js';
+//import { Scene } from "../scenes/Scene";
+import { TweenScene } from "../scenes/TweenScene";
 
 
 const app = new Application({
@@ -78,6 +80,7 @@ const myBlurFilter = new BlurFilter();
 clampy.filters = [myBlurFilter];
 
 //Make it rain PArticles
+/*
 const particleContainer = new ParticleContainer();
 app.stage.addChild(particleContainer);
 
@@ -85,5 +88,10 @@ const emitter: particles.Emitter = new particles.Emitter(particleContainer, Text
 emitter.autoUpdate = true; // If you keep it false, you have to update your particles yourself.
 emitter.updateSpawnPos(200, 100);
 emitter.emit = true;
+*/
 
-PIXI.particles.Emitter
+// const sceny: Scene = new Scene(app.screen.width, app.screen.height);
+// app.stage.addChild(sceny);
+
+const sceneTween: TweenScene = new TweenScene(app.screen.width, app.screen.height);
+app.stage.addChild(sceneTween);

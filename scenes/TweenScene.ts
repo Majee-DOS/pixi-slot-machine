@@ -36,7 +36,12 @@ export class TweenScene extends Container {
 
         // Add a pointerdown event to stop the tween on click
         this.startButton.on("pointerdown", () => {
+            const buttonTween = new Tween (this.startButton.scale).to({ x: 0.20, y: 0.20 }, 200).start();
+            buttonTween.onComplete(() => {
+                new Tween(this.startButton.scale).to({ x: 0.25, y: 0.25 }, 200).start();
+            })
             this.tween.stop();
+            console.log(`Current position of clampy: (${this.clampy.position.x}, ${this.clampy.position.y})`);
         });
 
     }

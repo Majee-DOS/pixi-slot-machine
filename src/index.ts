@@ -6,6 +6,7 @@ import { BlurFilter } from "pixi.js"; //, ParticleContainer, Texture
 //import PIXI from 'pixi.js';
 //import { Scene } from "../scenes/Scene";
 import { TweenScene } from "../scenes/TweenScene";
+import { TickerScene } from "../scenes/TickerScene";
 
 
 const app = new Application({
@@ -92,6 +93,9 @@ emitter.emit = true;
 
 // const sceny: Scene = new Scene(app.screen.width, app.screen.height);
 // app.stage.addChild(sceny);
+
+const sceneTick: TickerScene = new TickerScene(app.screen.width, app.screen.height);
+app.stage.addChild(sceneTick);
 
 const sceneTween: TweenScene = new TweenScene(app.screen.width, app.screen.height);
 app.stage.addChild(sceneTween);

@@ -1,12 +1,7 @@
-import { Application, Sprite, Container, Texture } from 'pixi.js'
-//import * as particleSettings from "./emitter.json";
-//import { Emitter } from "pixi-particles";
-//import particles from 'pixi-particles';
-//import PIXI from 'pixi.js';
-//import { Scene } from "../scenes/Scene";
+import { Application, Sprite, Container, Texture, Ticker } from 'pixi.js'
 import { TweenScene } from "../scenes/TweenScene";
-// import { TickerScene } from "../scenes/TickerScene";
 import { LoaderScene } from "../scenes/LoaderScene";
+import { Tween, Group } from 'tweedle.js'
 
 
 const app = new Application({
@@ -27,6 +22,13 @@ app.stage.addChild(sceneLoader);
 const REEL_WIDTH = 150;
 const SYMBOL_SIZE = 150;
 const NUM_REELS = 5;
+interface Reel {
+	container: Container;
+	strip: number[];
+	symbols: Sprite[];
+	position: number;
+	previousPosition?: number;
+  }
 
 LoaderScene.emitter.on('loaded', () => {
 	onAssetsLoaded();
@@ -68,6 +70,10 @@ function createAndScaleSymbol(slotTextures: Texture[], textureIndex: number) {
   return symbol;
 }
 
+function update(): void {
+	Group.shared.update();
+}
+
 // onAssetsLoaded handler builds the slot machine
 function onAssetsLoaded() {
   const slotTextures = createSlotTextures();
@@ -80,7 +86,7 @@ function onAssetsLoaded() {
     [1, 1, 6, 4, 1, 3, 2, 0, 3, 3],
   ];
   
-  const reels = [];
+  const reels: Reel[] = [];
   const reelContainer = new Container();
   
   for (let i = 0; i < NUM_REELS; i++) {
@@ -99,4 +105,51 @@ function onAssetsLoaded() {
     reels.push(reel);
   }
   app.stage.addChild(reelContainer);
+
+
+  let running = false;
+
+  // Function to start playing
+  function startPlay() {
+    if (running) return;
+    running = true;
+
+    for (let i = 0; i < reels.length; i++) {
+      const r = reels[i];
+      const extra = Math.floor(Math.random() * 3);
+      const target = r.position + 10 + i * 5 + extra;
+      const time = 2000 + i * 250;
+      new Tween(r)
+        .to({ position: target }, time)
+        .onComplete(() => {
+          if (i === reels.length - 1) {
+            running = false;
+			update();
+          }
+        })
+        .start();
+    }
+  }
+
+  startPlay();
+
+  Ticker.shared.add(() => {
+    update();
+    //app.ticker.update(); // Add this line to update the ticker
+  });
+
+  const button: Sprite = new Sprite(Texture.from("startButton.png"));
+  button.scale.set(0.25);
+  button.position.set(500, 0);
+  app.stage.addChild(button);
+
+  button.interactive = true;
+  button.on("pointerdown", () => {
+	startPlay();
+	console.log("play");
+});
+
+
+
 }
+

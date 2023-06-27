@@ -3,6 +3,7 @@ import { Application, Sprite, Container, Texture, Graphics } from 'pixi.js'
 import { LoaderScene } from "../scenes/LoaderScene";
 import TWEEN from "@tweenjs/tween.js";
 import { sound } from "@pixi/sound";
+import { JackpotScene } from "../scenes/JackpotScene";
 
 const app = new Application({
   view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
@@ -18,6 +19,8 @@ const app = new Application({
 
 const sceneLoader: LoaderScene = new LoaderScene(app.screen.width, app.screen.height);
 app.stage.addChild(sceneLoader);
+
+const sceneJackpot: JackpotScene = new JackpotScene(app.screen.width, app.screen.height);
 
 const REEL_WIDTH = 150;
 const SYMBOL_SIZE = 150;
@@ -79,7 +82,7 @@ function onAssetsLoaded() {
 
   const backgroundTexture = Texture.from('background');
 
-  // Create a sprite with the camo texture and set it as the background
+  // Create a sprite with the backgroundtexture and set it as the background
   const background = new Sprite(backgroundTexture);
   background.width = app.screen.width;
   background.height = app.screen.height;
@@ -142,6 +145,10 @@ function onAssetsLoaded() {
               sound.play("jackpot");
               sound.volume("jackpot", 0.4);
               console.log("YOU WON!");
+              app.stage.addChild(sceneJackpot);
+              setTimeout(() => {
+                app.stage.removeChild(sceneJackpot);
+              }, 2000);
             }
           }
         })
@@ -154,9 +161,7 @@ function onAssetsLoaded() {
     // Update the slots
     for (let i = 0; i < reels.length; i++) {
       const r = reels[i];
-      // Update blur filter y amount based on speed
       r.previousPosition = r.position;
-
       // Update symbol positions on reel
       for (let j = 0; j < r.symbols.length; j++) {
         const s = r.symbols[j];
@@ -247,7 +252,6 @@ function onAssetsLoaded() {
       'four': 4,
       'five': 5,
       'six': 6
-      // add more as needed
     };
 
     for (let i = 0; i < reels.length; i++) {
@@ -306,9 +310,5 @@ function onAssetsLoaded() {
     // If no consecutive numbers found, return false
     return false;
   }
-
-
-
-
 
 }

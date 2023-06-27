@@ -133,6 +133,7 @@ function onAssetsLoaded() {
         .onComplete(() => {
           if (i === reels.length - 1) {
             running = false;
+            logFinalState(reels);
           }
         })
         .start();
@@ -162,7 +163,7 @@ function onAssetsLoaded() {
   const button: Sprite = new Sprite(Texture.from("startButton.png"));
   button.scale.set(0.25);
   button.position.set(0, 0);
-  app.stage.addChild(button);
+  //app.stage.addChild(button);
 
   button.interactive = true;
   button.on("pointerdown", () => {
@@ -191,5 +192,34 @@ function onAssetsLoaded() {
 
   app.stage.addChild(top);
   app.stage.addChild(bottom);
+  
+  
+
+  bottom.addChild(button);
+
+  function logFinalState(reels: Reel[]) {
+    const bufferSymbols = Math.floor((app.screen.height - SYMBOL_SIZE * 4) / (2 * SYMBOL_SIZE));
+  
+    for (let i = 0; i < reels.length; i++) {
+      const r = reels[i];
+      const symbolsToLog: { symbol: Sprite, position: number }[] = [];
+  
+      for (let j = 0; j < r.symbols.length; j++) {
+        const s = r.symbols[j];
+        const position = ((r.position + j + bufferSymbols) % r.symbols.length);
+  
+        // Store the symbols that are within the visible area, pushed down by one
+        if (position >= 1 && position < 5) {
+          symbolsToLog.push({ symbol: s, position: position });
+        }
+      }
+  
+      // Sort the symbols by their position and log them
+      console.log(`Reel ${i + 1}:`);
+      symbolsToLog.sort((a, b) => a.position - b.position).forEach(({ symbol, position }) => {
+        console.log(`  Symbol ${position + 1}: ${symbol.texture.textureCacheIds}`);
+      });
+    }
+  }
 
 }

@@ -2,7 +2,7 @@ import { Tween, Group } from "tweedle.js";
 import { Container, Sprite, Ticker, Point } from "pixi.js";
 
 export class JackpotScene extends Container {
-    private mario: Sprite;
+    private marios: Sprite[] = [];
     private screenWidth: number;
     private screenHeight: number;
 
@@ -12,17 +12,21 @@ export class JackpotScene extends Container {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         
-        this.mario = Sprite.from("mario.png");
+        for (let i = 0; i < 12; i++) {
+            let mario = Sprite.from("mario.png");
 
-        this.mario.anchor.set(0.5);
-        this.mario.x = this.screenWidth / 2;
-        this.mario.y = 0;
-        this.mario.scale.set(0.25);
-        this.addChild(this.mario);
+            mario.anchor.set(0.5);
+            mario.x = Math.random() * this.screenWidth; // Random x position
+            mario.y = 0 - ( Math.random() * this.screenHeight );
+            mario.scale.set(0.25);
+            this.addChild(mario);
+            
+            this.marios.push(mario);
+            
+            new Tween<Point>(mario.position).to({ x: mario.x, y: this.screenHeight }, (Math.random() * 1500)).repeat(Infinity).start();
+        }
 
         Ticker.shared.add(this.update, this);
-
-        new Tween<Point>(this.mario.position).to({ x: this.screenWidth / 2, y: this.screenHeight }, 800).repeat(Infinity).start();
     }
 
     private update(): void {

@@ -23,6 +23,7 @@ export const manifest: ResolverManifest = {
             assets:
             {
                 'backgroundMusic': 'background music.mp3',
+                'jackpot': 'jackpot.mp3',
             }
         }
     ]

@@ -139,9 +139,10 @@ function onAssetsLoaded() {
             const winningSpin = hasConsecutiveNums(matrix);
             console.log(winningSpin);
             if (winningSpin) {
-              //sound.play("jackpot");
+              sound.play("jackpot");
+              sound.volume("jackpot", 0.4);
+              console.log("YOU WON!");
             }
-
           }
         })
         .start();
@@ -170,11 +171,16 @@ function onAssetsLoaded() {
 
   const button: Sprite = new Sprite(Texture.from("startButton.png"));
   button.scale.set(0.25);
-  button.position.set(0, 0);
+  button.anchor.set(0.5, 0);
+  button.position.set(app.screen.width / 2, 0);
   //app.stage.addChild(button);
 
   button.interactive = true;
   button.on("pointerdown", () => {
+    const buttonTween = new TWEEN.Tween(button.scale).to({ x: 0.20, y: 0.20 }, 200).start();
+    buttonTween.onComplete(() => {
+      new TWEEN.Tween(button.scale).to({ x: 0.25, y: 0.25 }, 200).start();
+    })
     startPlay();
     console.log("play");
   });
@@ -200,10 +206,8 @@ function onAssetsLoaded() {
 
   app.stage.addChild(top);
   app.stage.addChild(bottom);
+  top.addChild(button);
 
-
-
-  bottom.addChild(button);
 
   function logFinalState(reels: Reel[]) {
     const bufferSymbols = Math.floor((app.screen.height - SYMBOL_SIZE * 4) / (2 * SYMBOL_SIZE));
@@ -265,7 +269,7 @@ function onAssetsLoaded() {
       symbolsToLog.sort((a, b) => a.position - b.position).forEach(({ symbol }) => {
         // Extract the number from textureCacheIds and convert it to a number
         const numStr = symbol.texture.textureCacheIds[1].split('.')[0]; // "zero.png" -> "zero"
-        const num = symbolValueMap[numStr as keyof typeof symbolValueMap]; 
+        const num = symbolValueMap[numStr as keyof typeof symbolValueMap];
         column.push(num);
       });
 

@@ -8,3 +8,5 @@ To run the slot machine, follow these steps:
 - Clone the repository: git clone
 - Install the dependencies: npm install
 - Start the project: npm run start
+
+### Open up the Devtools console to see matrix of the reel.

@@ -134,6 +134,14 @@ function onAssetsLoaded() {
           if (i === reels.length - 1) {
             running = false;
             logFinalState(reels);
+            //matrixFinalState(reels);
+            const matrix = matrixFinalState(reels);
+            const winningSpin = hasConsecutiveNums(matrix);
+            console.log(winningSpin);
+            if (winningSpin) {
+              //sound.play("jackpot");
+            }
+
           }
         })
         .start();
@@ -192,28 +200,28 @@ function onAssetsLoaded() {
 
   app.stage.addChild(top);
   app.stage.addChild(bottom);
-  
-  
+
+
 
   bottom.addChild(button);
 
   function logFinalState(reels: Reel[]) {
     const bufferSymbols = Math.floor((app.screen.height - SYMBOL_SIZE * 4) / (2 * SYMBOL_SIZE));
-  
+
     for (let i = 0; i < reels.length; i++) {
       const r = reels[i];
       const symbolsToLog: { symbol: Sprite, position: number }[] = [];
-  
+
       for (let j = 0; j < r.symbols.length; j++) {
         const s = r.symbols[j];
         const position = ((r.position + j + bufferSymbols) % r.symbols.length);
-  
+
         // Store the symbols that are within the visible area, pushed down by one
         if (position >= 1 && position < 5) {
           symbolsToLog.push({ symbol: s, position: position });
         }
       }
-  
+
       // Sort the symbols by their position and log them
       console.log(`Reel ${i + 1}:`);
       symbolsToLog.sort((a, b) => a.position - b.position).forEach(({ symbol, position }) => {
@@ -221,5 +229,82 @@ function onAssetsLoaded() {
       });
     }
   }
+
+  function matrixFinalState(reels: Reel[]) {
+    const bufferSymbols = Math.floor((app.screen.height - SYMBOL_SIZE * 4) / (2 * SYMBOL_SIZE));
+    let matrix: number[][] = [];
+
+    // Create a map of symbol names to their corresponding numerical values
+    const symbolValueMap = {
+      'zero': 0,
+      'one': 1,
+      'two': 2,
+      'three': 3,
+      'four': 4,
+      'five': 5,
+      'six': 6
+      // add more as needed
+    };
+
+    for (let i = 0; i < reels.length; i++) {
+      const r = reels[i];
+      const symbolsToLog: { symbol: Sprite, position: number }[] = [];
+      let column: number[] = [];
+
+      for (let j = 0; j < r.symbols.length; j++) {
+        const s = r.symbols[j];
+        const position = ((r.position + j + bufferSymbols) % r.symbols.length);
+
+        // Store the symbols that are within the visible area, pushed down by one
+        if (position >= 1 && position < 5) {
+          symbolsToLog.push({ symbol: s, position: position });
+        }
+      }
+
+      // Sort the symbols by their position and store them in column
+      symbolsToLog.sort((a, b) => a.position - b.position).forEach(({ symbol }) => {
+        // Extract the number from textureCacheIds and convert it to a number
+        const numStr = symbol.texture.textureCacheIds[1].split('.')[0]; // "zero.png" -> "zero"
+        const num = symbolValueMap[numStr as keyof typeof symbolValueMap]; 
+        column.push(num);
+      });
+
+      matrix.push(column); // Add the column to the matrix
+    }
+
+    console.table(matrix); // Log the matrix as a table
+    return matrix;
+  }
+
+
+  function hasConsecutiveNums(matrix: number[][]): boolean {
+    const n = matrix.length;
+    const m = matrix[0].length;
+
+    // Check rows for consecutive numbers
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < m - 2; j++) {
+        if (matrix[i][j] === matrix[i][j + 1] && matrix[i][j + 1] === matrix[i][j + 2]) {
+          return true;
+        }
+      }
+    }
+
+    // Check columns for consecutive numbers
+    for (let j = 0; j < m; j++) {
+      for (let i = 0; i < n - 2; i++) {
+        if (matrix[i][j] === matrix[i + 1][j] && matrix[i + 1][j] === matrix[i + 2][j]) {
+          return true;
+        }
+      }
+    }
+
+    // If no consecutive numbers found, return false
+    return false;
+  }
+
+
+
+
 
 }

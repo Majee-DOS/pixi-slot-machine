@@ -8,6 +8,7 @@ export const manifest: ResolverManifest = {
             {
                 'mario coin' : 'mario.png',
                 'camo': 'camo.png',
+                'background': 'background.jpg',
                 'zero': 'zero.png',
                 'one': 'one.png',
                 'two': 'two.png',
@@ -17,5 +18,12 @@ export const manifest: ResolverManifest = {
                 'six': 'six.png',
             }
         },
+        {
+            name: 'soundBundle',
+            assets:
+            {
+                'backgroundMusic': 'background music.mp3',
+            }
+        }
     ]
 }

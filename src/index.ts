@@ -1,7 +1,8 @@
-import { Application, Sprite, Container, Texture} from 'pixi.js'
+import { Application, Sprite, Container, Texture, Graphics } from 'pixi.js'
 //import { TweenScene } from "../scenes/TweenScene";
 import { LoaderScene } from "../scenes/LoaderScene";
 import TWEEN from "@tweenjs/tween.js";
+import { sound } from "@pixi/sound";
 
 const app = new Application({
   view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
@@ -47,7 +48,8 @@ function createSlotTextures() {
 
 function createReelContainer(i: number) {
   const rc = new Container();
-  rc.x = (app.screen.width - (NUM_REELS * REEL_WIDTH)) / 2 + i * REEL_WIDTH;
+  //rc.x = (app.screen.width - (NUM_REELS * REEL_WIDTH)) / 2 + i * REEL_WIDTH;
+  rc.x = i * REEL_WIDTH;
   return rc;
 }
 
@@ -72,6 +74,17 @@ function createAndScaleSymbol(slotTextures: Texture[], textureIndex: number) {
 
 // onAssetsLoaded handler builds the slot machine
 function onAssetsLoaded() {
+  sound.play("backgroundMusic");
+  sound.volume("backgroundMusic", 0.2);
+
+  const backgroundTexture = Texture.from('background');
+
+  // Create a sprite with the camo texture and set it as the background
+  const background = new Sprite(backgroundTexture);
+  background.width = app.screen.width;
+  background.height = app.screen.height;
+  app.stage.addChild(background);
+
   const slotTextures = createSlotTextures();
 
   const reelStrips = [
@@ -126,23 +139,23 @@ function onAssetsLoaded() {
     }
   }
 
-    // Listen for animate update
-    app.ticker.add(() => {
-      // Update the slots
-      for (let i = 0; i < reels.length; i++) {
-        const r = reels[i];
-        // Update blur filter y amount based on speed
-        r.previousPosition = r.position;
-  
-        // Update symbol positions on reel
-        for (let j = 0; j < r.symbols.length; j++) {
-          const s = r.symbols[j];
-          s.y = ((r.position + j) % r.symbols.length) * SYMBOL_SIZE - SYMBOL_SIZE;
-        }
+  // Listen for animate update
+  app.ticker.add(() => {
+    // Update the slots
+    for (let i = 0; i < reels.length; i++) {
+      const r = reels[i];
+      // Update blur filter y amount based on speed
+      r.previousPosition = r.position;
+
+      // Update symbol positions on reel
+      for (let j = 0; j < r.symbols.length; j++) {
+        const s = r.symbols[j];
+        s.y = ((r.position + j) % r.symbols.length) * SYMBOL_SIZE - SYMBOL_SIZE;
       }
-      // Update tweens group
-      TWEEN.update();
-    });
+    }
+    // Update tweens group
+    TWEEN.update();
+  });
 
   startPlay();
 
@@ -156,5 +169,27 @@ function onAssetsLoaded() {
     startPlay();
     console.log("play");
   });
+
+
+  // Build top and bottom covers and position reelContainer
+  const margin = (app.screen.height - SYMBOL_SIZE * 4) / 2;
+  reelContainer.y = margin;
+  reelContainer.x = Math.round(app.screen.width - REEL_WIDTH * 5) / 2;
+
+  const top = new Graphics();
+  top.beginFill(0, 1);
+  top.drawRect(0, 0, app.screen.width, margin - 5);
+
+  const bottom = new Graphics();
+  bottom.beginFill(0, 1);
+  bottom.drawRect(
+    0,
+    SYMBOL_SIZE * 4 + margin - 5,
+    app.screen.width,
+    margin + 5
+  );
+
+  app.stage.addChild(top);
+  app.stage.addChild(bottom);
 
 }

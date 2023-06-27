@@ -8,6 +8,13 @@ export const manifest: ResolverManifest = {
             {
                 'mario coin' : 'mario.png',
                 'camo': 'camo.png',
+                'zero': 'zero.png',
+                'one': 'one.png',
+                'two': 'two.png',
+                'three': 'three.png',
+                'four': 'four.png',
+                'five': 'five.png',
+                'six': 'six.png',
             }
         },
     ]
